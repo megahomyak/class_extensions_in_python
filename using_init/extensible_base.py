@@ -1,13 +1,10 @@
 import functools
 import inspect
 
-
-class MethodNotFoundInBaseClassError(Exception):
-    pass
-
-
-class ExtensionClassNotFoundError(Exception):
-    pass
+from using_init.exceptions import (
+    ExtensionClassNotFoundError,
+    MethodNotFoundInBaseClassError
+)
 
 
 class ExtensibleBase:
