@@ -31,10 +31,12 @@ class ExtensibleBase:
         extended_methods = {
             field_name: field
             for field_name, field in extension_class.__dict__.items()
-            # Using isfunction, because ismethod isn't working, because methods
-            # is from class, not from instance of a class
-            if inspect.isfunction(field)
+            if callable(field) or isinstance(
+                field, (staticmethod, classmethod, property)
+            )
         }
+        print(extended_methods)
+        print(extension_class.__dict__.items(), self.__class__.__dict__)
         for method_name, method in extended_methods.items():
             # self.__dict__ is empty at this moment IDK why, so using
             # self.__class__.__dict__
@@ -45,5 +47,8 @@ class ExtensibleBase:
             # Using functools.partial because self isn't being passed to
             # methods, because they are methods from the class, not from
             # instance of a class
-            self.__dict__[method_name] = functools.partial(method, self)
+            if isinstance(method, (staticmethod, classmethod, property)):
+                self.__dict__[method_name] = method.__get__(self)
+            else:
+                self.__dict__[method_name] = functools.partial(method, self)
         # And we're done!
