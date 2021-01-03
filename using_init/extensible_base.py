@@ -14,7 +14,7 @@ class ExtensibleBase:
         # file
         try:
             extension_class: object = __import__(
-                extension_file_name, fromlist=['my_class']
+                extension_file_name, fromlist=[self.__class__.__name__]
             ).__dict__[self.__class__.__name__]
         except KeyError:
             raise ExtensionClassNotFoundError(
@@ -28,10 +28,12 @@ class ExtensibleBase:
                 f"type {type(extension_class)}, but it should be a class! "
                 f"(type {type(type)})"  # Python...
             )
-        print(extension_class.__dict__, self.__class__.__dict__)
         for field_name, field in extension_class.__dict__.items():
             try:
-                if callable(field) or callable(field.__get__):
+                if (
+                    callable(field) or callable(field.__get__)
+                    and field_name not in ("__dict__", "__weakref__")
+                ):
                     # Using self.__class__.__dict__ cuz self.__dict__ is empty
                     if field_name not in self.__class__.__dict__:
                         raise MethodNotFoundInBaseClassError(
