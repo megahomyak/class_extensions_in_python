@@ -28,27 +28,24 @@ class ExtensibleBase:
                 f"type {type(extension_class)}, but it should be a class! "
                 f"(type {type(type)})"  # Python...
             )
-        extended_methods = {
-            field_name: field
-            for field_name, field in extension_class.__dict__.items()
-            if callable(field) or isinstance(
-                field, (staticmethod, classmethod, property)
-            )
-        }
-        print(extended_methods)
-        print(extension_class.__dict__.items(), self.__class__.__dict__)
-        for method_name, method in extended_methods.items():
-            # self.__dict__ is empty at this moment IDK why, so using
-            # self.__class__.__dict__
-            if method_name not in self.__class__.__dict__:
-                raise MethodNotFoundInBaseClassError(
-                    f"Method '{method_name}' isn't in the base class!"
-                )
-            # Using functools.partial because self isn't being passed to
-            # methods, because they are methods from the class, not from
-            # instance of a class
-            if isinstance(method, (staticmethod, classmethod, property)):
-                self.__dict__[method_name] = method.__get__(self)
-            else:
-                self.__dict__[method_name] = functools.partial(method, self)
-        # And we're done!
+        print(extension_class.__dict__, self.__class__.__dict__)
+        for field_name, field in extension_class.__dict__.items():
+            try:
+                if callable(field) or callable(field.__get__):
+                    # Using self.__class__.__dict__ cuz self.__dict__ is empty
+                    if field_name not in self.__class__.__dict__:
+                        raise MethodNotFoundInBaseClassError(
+                            f"Method '{field_name}' isn't in the base class!"
+                        )
+                    if callable(field):
+                        pure_method = field
+                    else:
+                        pure_method = field.__get__
+                    # Using functools.partial because self isn't being passed to
+                    # methods, because they are methods from the class, not from
+                    # instance of a class
+                    self.__dict__[field_name] = functools.partial(
+                        pure_method, self
+                    )
+            except AttributeError:
+                pass
