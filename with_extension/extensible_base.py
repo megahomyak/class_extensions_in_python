@@ -1,7 +1,7 @@
 import functools
 import inspect
 
-from using_init.exceptions import (
+from with_extension.exceptions import (
     ExtensionClassNotFoundError,
     MethodNotFoundInBaseClassError
 )

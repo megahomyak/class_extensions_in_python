@@ -1,4 +1,4 @@
-from using_init.extensible_base import ExtensibleBase
+from with_extension.extensible_base import ExtensibleBase
 
 
 class A(ExtensibleBase):
