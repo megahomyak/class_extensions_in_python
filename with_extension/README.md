@@ -1,4 +1,4 @@
-# Start point is usage.py!!!
+# Start point is tests/usage.py!!!
 
 # What happens
 
