@@ -1,5 +1,6 @@
 import functools
 import inspect
+from typing import Optional
 
 from using_extensible_base.exceptions import (
     ExtensionClassNotFoundError,
@@ -9,22 +10,25 @@ from using_extensible_base.exceptions import (
 
 class ExtensibleBase:
 
-    def __init__(self, extension_file_name: str):
+    def __init__(
+            self, extension_file_name: str, class_name: Optional[str] = None):
         # Getting extension class by name of the current class from imported
         # file
+        if class_name is None:
+            class_name = self.__class__.__name__
         try:
             extension_class: object = __import__(
-                extension_file_name, fromlist=[self.__class__.__name__]
-            ).__dict__[self.__class__.__name__]
+                extension_file_name, fromlist=[class_name]
+            ).__dict__[class_name]
         except KeyError:
             raise ExtensionClassNotFoundError(
-                f"Nothing named '{self.__class__.__name__}' is found in file "
+                f"Nothing named '{class_name}' is found in file "
                 f"'{extension_file_name}', which should contain the extension "
-                f"class named '{self.__class__.__name__}'"
+                f"class named '{class_name}'"
             )
         if not inspect.isclass(extension_class):
             raise ExtensionClassNotFoundError(
-                f"'{self.__class__.__name__}' from '{extension_file_name}' has "
+                f"'{class_name}' from '{extension_file_name}' has "
                 f"type {type(extension_class)}, but it should be a class! "
                 f"(type {type(type)})"  # Python...
             )
