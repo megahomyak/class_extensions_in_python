@@ -8,9 +8,6 @@ class ExtendedInterfaceImplemented(Interface):
         print("abc")
 
 
-print(ExtendedInterfaceImplemented.__mro__)
-
-
 extended_interface_implemented = ExtendedInterfaceImplemented(
     "using_extensible_base.tests.interfaces.interface_extension", "Interface"
 )
