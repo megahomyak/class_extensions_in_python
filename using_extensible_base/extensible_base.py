@@ -1,5 +1,6 @@
 import functools
 import inspect
+import itertools
 from copy import deepcopy
 from typing import Optional
 
@@ -85,6 +86,14 @@ class ExtensibleBase:
                 f"type {type(extension_class)}, but it should be a class! "
                 f"(type {type(type)})"  # Python...
             )
+        all_accessible_fields = {
+            *cls_copy.__dict__.keys(),
+            *list(itertools.chain(
+                *[superclass.__dict__.keys() for superclass in cls_copy.__mro__]
+            ))
+            # Jewish tricks
+        }
+        print(all_accessible_fields)
         for field_name, field in extension_class.__dict__.items():
             try:
                 if (
@@ -92,13 +101,7 @@ class ExtensibleBase:
                     and field_name not in ("__dict__", "__weakref__")
                 ):
                     # Using self.__class__.__dict__ cuz self.__dict__ is empty
-                    if field_name not in [
-                        cls_copy.__dict__,
-                        *[
-                            superclass.__dict__
-                            for superclass in cls_copy.__mro__  # Jewish tricks
-                        ]
-                    ]:
+                    if field_name not in all_accessible_fields:
                         raise MethodNotFoundInBaseClassError(
                             f"Method '{field_name}' isn't in the base "
                             f"class or its subclasses!"
