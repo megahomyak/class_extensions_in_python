@@ -113,7 +113,12 @@ class ExtensibleBase:
                     # Using functools.partial because self isn't being passed to
                     # methods, because they are methods from the class, not from
                     # instance of a class
-                    cls_copy.__dict__[field_name] = pure_method
+                    setattr(cls_copy, field_name, pure_method)
             except AttributeError:
                 pass
-        return super(cls_copy).__new__(cls_copy)
+        # noinspection PyArgumentList
+        print("fdfosjds", cls_copy.__dict__)
+        return super(cls_copy, cls).__new__(
+            cls_copy, extension_file_name=extension_file_name,
+            class_name=class_name
+        )
