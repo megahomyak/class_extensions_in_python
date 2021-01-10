@@ -118,7 +118,4 @@ class ExtensibleBase:
                 pass
         # noinspection PyArgumentList
         print("fdfosjds", cls_copy.__dict__)
-        return super(cls_copy, cls).__new__(
-            cls_copy, extension_file_name=extension_file_name,
-            class_name=class_name
-        )
+        return super().__new__(cls_copy)
