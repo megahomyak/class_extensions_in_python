@@ -8,8 +8,9 @@ class ExtendedInterfaceImplemented(Interface):
         print("abc")
 
 
-extended_interface_implemented = ExtendedInterfaceImplemented(
+ExtendedInterfaceImplemented.extend(
     "using_extensible_base.tests.interfaces.interface_extension", "Interface"
 )
+extended_interface_implemented = ExtendedInterfaceImplemented()
 extended_interface_implemented.some_abstract_method()
 print(extended_interface_implemented.some_extension_method())
